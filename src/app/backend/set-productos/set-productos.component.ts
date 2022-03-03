@@ -137,7 +137,7 @@ export class SetProductosComponent implements OnInit {
      this.newFile = event.target.files[0];
     const reader = new FileReader();
     reader.onload = ((image) => {
-        this.newImage = image.target.result as string;
+        this.newProducto.foto = image.target.result as string;
     });
     reader.readAsDataURL(event.target.files[0]);
   }

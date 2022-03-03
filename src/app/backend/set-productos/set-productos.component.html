@@ -23,20 +23,17 @@
 
     <div *ngIf="enableNewProductos">
 
-        <h4 class="subtitulo encabezado">Ingrese datos del producto</h4>
-
         <ion-item>
-            <ion-buttons slot="end" >
-                <ion-button (click)="enableNewProductos=false;">
-                    <ion-icon name="close-outline"></ion-icon>
-                </ion-button>
-                <ion-button (click)="guardarProducto()">        
-                    <ion-button>        
-                     <ion-button style="margin: 10px;" expand="full" color="dark" 
-                     >guardar</ion-button>
+            <ion-buttons slot="end">
+              <ion-button (click)="enableNewProductos = false">
+                <ion-icon slot="icon-only" name="close"></ion-icon>
+              </ion-button>
+               <ion-button (click)="guardarProducto() ">
+                <ion-icon color="primary" slot="icon-only" name="save-sharp"></ion-icon>
                 </ion-button>
             </ion-buttons>
-        </ion-item>
+          </ion-item>
+          <h3 class="subtitulo encabezado">Ingrese datos del producto</h3>
     
         <ion-item>
             <ion-label class="normal" position="floating">
