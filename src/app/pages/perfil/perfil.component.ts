@@ -36,7 +36,7 @@ export class PerfilComponent implements OnInit {
                     this.uid = res.uid;
                     this.getUserInfo(this.uid);
                  }
-           });
+          });
               }
 
    async ngOnInit() {
