@@ -64,6 +64,7 @@ export class SetProductosComponent implements OnInit {
   getProductos(){
     this.firestoreService.getCollection<Producto>(this.path).subscribe(   res => {
       this.productos = res;
+      console.log('productos', res);
     });
   }
 
