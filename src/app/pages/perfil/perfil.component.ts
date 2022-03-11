@@ -4,6 +4,7 @@ import { Cliente } from 'src/app/models';
 import { FirebaseauthService } from '../../servicios/firebaseauth.service';
 import { FirestorageService } from '../../servicios/firestorage.service';
 import { FirestoreService } from '../../servicios/firestore.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-perfil',
@@ -26,6 +27,10 @@ export class PerfilComponent implements OnInit {
 
   uid = '';
 
+  suscriberUserInfo: Subscription;
+
+  ingresarEnable = false;
+
   constructor(public menu: MenuController,
               public firebaseauthService: FirebaseauthService,
               public firestorageService: FirestorageService,
@@ -35,7 +40,9 @@ export class PerfilComponent implements OnInit {
                   if (res !== null) {
                     this.uid = res.uid;
                     this.getUserInfo(this.uid);
-                 }
+                 }else {
+                  this.initCliente();
+              }
           });
               }
 
@@ -45,6 +52,20 @@ export class PerfilComponent implements OnInit {
     console.log(uid);
 
    }
+
+   initCliente() {
+    this.uid = '';
+    this.cliente = {
+      uid: '',
+      email: '',
+      celular: '',
+      foto: '',
+      referencia: '',
+      nombre: '',
+      ubicacion: null,
+    };
+    console.log(this.cliente);
+}
 
   openMenu(){
     console.log('open menu');
@@ -96,16 +117,27 @@ export class PerfilComponent implements OnInit {
   //const uid = await this.firebaseauthService.getUid();
   //console.log(uid);
   this.firebaseauthService.logout();
+  this.suscriberUserInfo.unsubscribe();
  }
 
  getUserInfo(uid: string) {
   console.log('getUserInfo');
   const path = 'Clientes';
-  this.firestoreService.getDoc<Cliente>(path, uid).subscribe( res => {
+  this.suscriberUserInfo = this.firestoreService.getDoc<Cliente>(path, uid).subscribe( res => {
          if (res !== undefined) {
            this.cliente = res;
          }
   });
+}
+
+ingresar(){
+  const credenciales = {
+    email: this.cliente.email,
+    password: this.cliente.celular
+  };
+  this.firebaseauthService.login(credenciales.email, credenciales.password).then( res => {
+    console.log('ingreso con exito');
+});
 }
 
 }
