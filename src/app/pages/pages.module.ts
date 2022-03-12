@@ -6,13 +6,15 @@ import { RouterModule } from '@angular/router';
 import { PerfilComponent } from './perfil/perfil.component';
 import { FormsModule } from '@angular/forms';
 import { ComponentesModule } from '../componentes/componentes.module';
+import { CarritoComponent } from './carrito/carrito.component';
 
 
 
 @NgModule({
   declarations: [
     HomeComponent,
-    PerfilComponent
+    PerfilComponent,
+    CarritoComponent,
   ],
   imports: [
     CommonModule,

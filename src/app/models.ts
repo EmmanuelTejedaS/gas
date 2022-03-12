@@ -17,3 +17,20 @@ export interface Producto {
     id: string;
     fecha: Date;
 }
+
+export interface Pedido {
+    id: string;
+    cliente: Cliente;
+    productos: ProductoPedido[];
+    precioTotal: number;
+    estado: EstadoPedido;
+    fecha: any;
+    valoracion: number;
+ }
+
+ export interface ProductoPedido {
+     producto: Producto;
+     cantidad: number;
+ }
+
+ export type  EstadoPedido = 'enviado' | 'visto' | 'camino' | 'entregado';
