@@ -7,7 +7,7 @@ import { Producto, Pedido, Cliente, ProductoPedido } from '../models';
 import { FirebaseauthService } from './firebaseauth.service';
 import { FirestoreService } from './firestore.service';
 import { promise } from 'protractor';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +20,15 @@ export class CarritoService {
   uid = '';
   cliente: Cliente;
 
+  carritoSuscriber: Subscription;
+  clienteSuscriber: Subscription;
+
 
   constructor(public firebaseauthService: FirebaseauthService,
               public firestoreService: FirestoreService,
               public router: Router) {
 
+    this.initCarrito();
     this.firebaseauthService.stateAuth().subscribe( res => {
       console.log(res);
       if (res !== null) {
@@ -36,16 +40,19 @@ export class CarritoService {
 
   loadCarrito(){
     const path = 'Clientes/' + this.uid + '/' + 'carrito';
-    this.firestoreService.getDoc<Pedido>(path,this.uid).subscribe(  res =>{
-        console.log(res);
-        if (res) {
-          this.pedido = res;
-          this.pedido$.next(this.pedido);
-    } else {
-        this.initCarrito();
+    if (this.carritoSuscriber) {
+      this.carritoSuscriber.unsubscribe();
     }
-    });
+    this.carritoSuscriber = this.firestoreService.getDoc<Pedido>(path, this.uid).subscribe( res => {
+          //   console.log(res);
+            if (res) {
+                  this.pedido = res;
+                  this.pedido$.next(this.pedido);
+            } else {
+                this.initCarrito();
+            }
 
+    });
 }
 
 initCarrito(){
@@ -63,15 +70,19 @@ initCarrito(){
 
 loadCliente(){
   const path = 'Clientes';
-  this.firestoreService.getDoc<Cliente>(path, this.uid).subscribe( res => {
+  this.clienteSuscriber = this.firestoreService.getDoc<Cliente>(path, this.uid).subscribe( res => {
          if (res !== undefined) {
            this.cliente = res;
            this.loadCarrito();
+           this.clienteSuscriber.unsubscribe();
          }
   });
 }
 
  getCarrito(): Observable<Pedido>{
+  setTimeout(() => {
+    this.pedido$.next(this.pedido);
+   }, 100);
   return this.pedido$.asObservable();
  }
 
@@ -92,6 +103,7 @@ loadCliente(){
        this.router.navigate(['/perfil']);
        return;
   }
+  this.pedido$.next(this.pedido);
   console.log('en add pedido -> ', this.pedido);
   const path = 'Clientes/' + this.uid + '/' + this.path;
   this.firestoreService.createDoc(this.pedido, path, this.uid).then( () => {
@@ -126,7 +138,11 @@ loadCliente(){
  }
 
  clearCarrito(){
-
+  console.log('se borro el carrito');
+  const path = 'Clientes/' + this.uid + '/' + 'carrito';
+  this.firestoreService.deleteDoc(path, this.uid).then( () => {
+      this.initCarrito();
+  });
  }
 
 }

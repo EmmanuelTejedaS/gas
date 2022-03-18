@@ -38,4 +38,9 @@ export class FirestoreService {
     return collection.valueChanges();
   }
 
+  getCollectionQuery<tipo>(path: string, parametro: string, condicion: any, busqueda: string){
+    const collection = this.database.collection<tipo>(path, ref  => ref.where(parametro, condicion, busqueda));
+    return collection.valueChanges();
+  }
+
 }

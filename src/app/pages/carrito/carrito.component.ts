@@ -1,22 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MenuController } from '@ionic/angular';
 import { FirestoreService } from '../../servicios/firestore.service';
 import { Pedido } from '../../models';
 import { CarritoService } from '../../servicios/carrito.service';
+import { Subscription } from 'rxjs';
+import { FirebaseauthService } from '../../servicios/firebaseauth.service';
 
 @Component({
   selector: 'app-carrito',
   templateUrl: './carrito.component.html',
   styleUrls: ['./carrito.component.scss'],
 })
-export class CarritoComponent implements OnInit {
+export class CarritoComponent implements OnInit, OnDestroy {
 
 
   pedido: Pedido;
+  carritoSuscriber: Subscription;
+  total: number;
+  cantidad: number;
 
   constructor(public menu: MenuController,
               public firestoreService: FirestoreService,
-              public carritoService: CarritoService) {
+              public carritoService: CarritoService,
+              public firebaseauthService: FirebaseauthService) {
 
                 this.initCarrito();
                 this.loadPedido();
@@ -26,14 +32,23 @@ export class CarritoComponent implements OnInit {
 ngOnInit() {
 }
 
+ngOnDestroy() {
+  //console.log('se destruyo');
+  if (this.carritoSuscriber) {
+    this.carritoSuscriber.unsubscribe();
+ }
+}
+
 openMenu(){
 console.log('open menu');
 this.menu.toggle('principal');
 }
 
 loadPedido(){
-      this.carritoService.getCarrito().subscribe(  res => {
+  this.carritoSuscriber = this.carritoService.getCarrito().subscribe(  res => {
         this.pedido =  res;
+        this.getTotal();
+        this.getCantidad();
       });
 }
 
@@ -47,6 +62,38 @@ initCarrito(){
     fecha: new Date(),
     valoracion: null,
   };
+}
+
+getTotal(){
+  this.total = 0;
+  this.pedido.productos.forEach( producto => {
+    this.total = (producto.producto.precioReducido) * producto.cantidad + this.total;
+   });
+}
+
+getCantidad(){
+  this.cantidad = 0;
+  this.pedido.productos.forEach( producto => {
+    this.cantidad =  producto.cantidad + this.cantidad;
+   });
+}
+
+async pedir(){
+  if (!this.pedido.productos.length) {
+    console.log('añade items al carrito');
+    return;
+  }
+  this.pedido.fecha = new Date();
+  this.pedido.precioTotal = this.total;
+  this.pedido.id = this.firestoreService.getId();
+  const uid = await this.firebaseauthService.getUid();
+  console.log('pedido es ', this.pedido, uid);
+  const path = 'Clientes/' + uid + '/pedidos/';
+  console.log(' pedir() -> ', this.pedido, uid, path);
+  this.firestoreService.createDoc(this.pedido, path, this.pedido.id).then(  () => {
+    console.log('guadado con exito');
+         this.carritoService.clearCarrito();
+  });
 }
 
 }

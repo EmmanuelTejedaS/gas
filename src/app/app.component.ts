@@ -7,6 +7,9 @@ import { FirebaseauthService } from './servicios/firebaseauth.service';
   styleUrls: ['app.component.scss'],
 })
 export class AppComponent {
+
+  admin = false;
+
   constructor(
     private firebaseauthService: FirebaseauthService
   ) {
@@ -15,6 +18,23 @@ export class AppComponent {
 
   initializeApp() {
     console.log('hola');
+    this.getUid();
   }
+
+
+  getUid() {
+    this.firebaseauthService.stateAuth().subscribe( res => {
+          if (res !== null) {
+              if (res.uid === '6Ee6ylrqRbeokH6CoQTOoDFfok83')  {
+                  this.admin = true;
+              } else {
+                 this.admin = false;
+              }
+          } else {
+            this.admin = false;
+          }
+    });
+}
+
 
 }
