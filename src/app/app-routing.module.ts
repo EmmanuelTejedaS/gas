@@ -8,10 +8,14 @@ import { MispedidosComponent } from './pages/mispedidos/mispedidos.component';
 import { AngularFireAuthGuard } from '@angular/fire/compat/auth-guard';
 import { canActivate } from '@angular/fire/auth-guard';
 import { map } from 'rxjs/operators';
+import { AngularFireAuthModule } from '@angular/fire/compat/auth';
+import { FirebaseauthService } from './servicios/firebaseauth.service';
 
-//const isAdmin = (next: any) => map( (user: any) => !!user && '6Ee6ylrqRbeokH6CoQTOoDFfok83' === user.uid);
-//const isAdmin = (next) => map(user => !!user && '6Ee6ylrqRbeokH6CoQTOoDFfok83' === user.uid);
-//, ...canActivate(isAdmin)
+//const uidAdmin = 'UwDgg5grfeWxvKVfqpuImy7UPTF3';
+//const isAdmin = () => map( (user: any) => !!user && user.uid === uidAdmin);
+//const isAdmin2 = (next: any) => map( (user: any) => !!user && 'UwDgg5grfeWxvKVfqpuImy7UPTF3' === user.uid);
+// , ...canActivate(isAdmin)
+
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
@@ -24,7 +28,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [
+  imports: [ AngularFireAuthModule,
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
   ],
   exports: [RouterModule]
