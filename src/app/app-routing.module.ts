@@ -10,6 +10,7 @@ import { canActivate } from '@angular/fire/auth-guard';
 import { map } from 'rxjs/operators';
 import { AngularFireAuthModule } from '@angular/fire/compat/auth';
 import { FirebaseauthService } from './servicios/firebaseauth.service';
+import { PedidosComponent } from './pages/pedidos/pedidos.component';
 
 //const uidAdmin = 'UwDgg5grfeWxvKVfqpuImy7UPTF3';
 //const isAdmin = () => map( (user: any) => !!user && user.uid === uidAdmin);
@@ -20,6 +21,7 @@ import { FirebaseauthService } from './servicios/firebaseauth.service';
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'set-productos', component: SetProductosComponent},
+  { path: 'pedidos', component: PedidosComponent},
   { path: 'mis-pedidos', component: MispedidosComponent },
   { path: 'carrito', component: CarritoComponent },
   { path: 'perfil', component: PerfilComponent },
