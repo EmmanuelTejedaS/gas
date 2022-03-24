@@ -56,4 +56,16 @@ export class FirestoreService {
     return collection.valueChanges();
   }
 
+  getCollectionPaginada<tipo>(path: string, limit: number, startAt: any){
+    if (startAt == null) {
+      startAt = new Date();
+    }
+    const collection = this.database.collection<tipo>(path,
+      ref  => ref.orderBy('fecha', 'desc')
+      .limit(limit)
+      .startAfter(startAt)
+      );
+    return collection.valueChanges();
+  }
+
 }
